@@ -1,0 +1,11 @@
+commit a231d0d77be20bf398ea8cdab6b12092797aa4e3
+Author: Siarhei Sivazhalezau <ssivazhalezau@exadel.com>
+Date:   Mon Feb 1 18:50:11 2021 +0300
+
+    added task1/status.txt
+
+commit 7ad3da7059f13f721b9a3c1cc31a7a4784c1ce53
+Author: Siarhei Sivazhalezau <ssivazhalezau@exadel.com>
+Date:   Mon Feb 1 18:41:10 2021 +0300
+
+    add .gitignore
