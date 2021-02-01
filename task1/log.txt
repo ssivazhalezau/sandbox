@@ -1,0 +1,11 @@
+commit 1d4bf460adc789c37ca43e2030ad13f5c1869998
+Author: Siarhei Sivazhalezau <ssivazhalezau@exadel.com>
+Date:   Mon Feb 1 21:08:34 2021 +0300
+
+    added task1 folder with content
+
+commit f5e7df256d7a03a1b8344c5ccd1ad25313998b09
+Author: Siarhei Sivazhalezau <ssivazhalezau@exadel.com>
+Date:   Mon Feb 1 21:02:45 2021 +0300
+
+    add .gitignore
