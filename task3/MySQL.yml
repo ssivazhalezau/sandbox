@@ -1,0 +1,36 @@
+---
+- name: Start mysql server
+  service:
+    name: "{{ mysql }}"
+    state: started
+    enabled: yes
+- wait_for:
+    port: 3306
+    timeout: 300
+
+- mysql_user:
+    name: intern
+    password: "{{ intern_pass }}"
+    priv: '*.*:ALL,GRANT'
+    state: present
+    login_user: root
+    login_password: ''
+    login_unix_socket: "/var/run/mysqld/mysqld.sock"
+  no_log: true
+  when: ansible_os_family == 'Debian'
+
+- mysql_user:
+    name: intern
+    password: "{{ intern_pass }}"
+    priv: '*.*:ALL,GRANT'
+    state: present
+    login_user: root
+    login_password: ''
+  when: ansible_os_family == 'RedHat'
+
+- name: Set database
+  mysql_db:
+    name: database
+    state: present
+    login_user: intern
+    login_password: "{{ intern_pass }}"

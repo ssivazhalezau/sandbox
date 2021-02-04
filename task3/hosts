@@ -1,0 +1,2 @@
+#ec2-54-175-133-243.compute-1.amazonaws.com ansible_user=ubuntu
+ec2-54-145-252-227.compute-1.amazonaws.com ansible_user=ec2-user ansible_python_interpreter=/usr/bin/python

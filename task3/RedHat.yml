@@ -1,0 +1,8 @@
+---
+- name: install lamp stack
+  yum:
+    name: ['{{ webserver }}',
+    '{{ mysql }}-server', 'MySQL-python' ,
+    '{{ php }}', '{{ php }}-mysql']
+    state: present
+    update_cache: yes

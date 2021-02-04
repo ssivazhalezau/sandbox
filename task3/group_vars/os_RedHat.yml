@@ -1,0 +1,4 @@
+---
+webserver: 'httpd'
+mysql:     'mariadb'
+php:       'php'  # this is php 5.4.16

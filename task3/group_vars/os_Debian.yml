@@ -1,0 +1,4 @@
+---
+webserver: 'apache2'
+mysql:     'mysql'
+php:       'php7.2'

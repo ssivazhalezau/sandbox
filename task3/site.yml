@@ -1,0 +1,38 @@
+#!/usr/bin/ansible-playbook
+---
+- name: talk to all hosts just so we can learn about them
+  hosts: all
+  gather_subset: min
+  become: no
+  tasks:
+    - name: Classify hosts depending on their OS distribution
+      group_by:
+        key: os_{{ ansible_facts['os_family'] }}
+
+- hosts: os_RedHat
+  become: yes
+  tasks:
+    - name: RedHat dependent tasks
+      import_tasks: RedHat.yml
+
+- hosts: os_Debian
+  become: yes
+  tasks:
+    - name: Debian dependent tasks
+      import_tasks: Debian.yml
+
+- name: OS independent tasks
+  hosts: all
+  become: yes
+  tasks:
+    - name: Configure mySQL
+      import_tasks: MySQL.yml
+
+    - name: Configure web service
+      import_tasks: webserver.yml
+
+  handlers:
+  - name: Restart apache
+    ansible.builtin.service:
+      name: "{{ webserver }}"
+      state: restarted

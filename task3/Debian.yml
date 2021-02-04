@@ -1,0 +1,8 @@
+---
+- name: install lamp stack
+  apt:
+    name: ['{{ webserver }}',
+    '{{ mysql }}-server', 'python-pymysql', 'python3-pymysql',
+    '{{ php }}', '{{ php }}-mysql']
+    state: present
+    update_cache: yes
