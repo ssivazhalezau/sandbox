@@ -11,7 +11,9 @@ services:
       - '2376:2376'
     restart: 'always'
     networks:
-      - jenkins
+      jenkins:
+        aliases:
+          - docker
 
   jenkins:
     build: .
@@ -60,6 +62,3 @@ volumes:
 
 networks:
   jenkins:
-    driver: bridge
-    network-alias:
-      - docker
