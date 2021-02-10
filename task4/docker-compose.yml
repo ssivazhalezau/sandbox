@@ -57,9 +57,12 @@ services:
 
 volumes:
   jenkins-docker-certs:
-    external: true
+    external:
+      name: jenkins-docker-certs
   jenkins-data:
-    external: true
+    external:
+      name: jenkins-data
 
 networks:
   jenkins:
+    driver: bridge
