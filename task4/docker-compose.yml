@@ -9,7 +9,6 @@ services:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
     ports:
-      - '2375:2375'
       - '2376:2376'
     restart: 'always'
     networks:
