@@ -1,0 +1,26 @@
+pipeline {
+    agent { label 'master' }
+
+    environment {
+      registry = 'ssivazhalezau/sandbox'
+      registryCredential = 'ssivazhalezau'
+      dockerfileContext = 'task2/'
+      dockerImage = ''
+    }
+
+    stages {
+      stage('Cloning our Git') {
+        steps {
+          git 'https://github.com/ssivazhalezau/sandbox.git'
+        }
+      }
+
+    stage('Building our image') {
+      steps {
+        script {
+          dockerImage = docker.build("${registry}:${BUILD_NUMBER}", "${dockerfileContext}")
+        }
+      }
+    }
+  }
+}
