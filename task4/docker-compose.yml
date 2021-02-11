@@ -20,10 +20,11 @@ services:
     build: .
     depends_on:
       - jenkins-docker
+    privileged: true
     environment:
       DOCKER_HOST: 'tcp://docker:2376'
       DOCKER_CERT_PATH: /certs/client
-      # DOCKER_TLS_VERIFY: ''
+      DOCKER_TLS_VERIFY: ''
     ports:
       - '8080:8080'
       - '50000:50000'
@@ -38,9 +39,9 @@ services:
       - type: volume
         source: jenkins-data
         target: /var/jenkins_home
-      # - type: bind
-      #   source: /var/run/docker.sock # <-- security problems
-      #   target: /var/run/docker.sock
+      - type: bind
+        source: /var/run/docker.sock # <-- security problems
+        target: /var/run/docker.sock
 
   agent0:
     image: jenkins/ssh-agent:3.0.0-alpine
