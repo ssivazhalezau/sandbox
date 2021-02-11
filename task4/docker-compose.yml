@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   jenkins-docker:
-    image: docker:19-dind
+    image: docker:18.09.5-dind
     privileged: true # <-- security problems
     environment:
       DOCKER_TLS_CERTDIR: '/certs'
