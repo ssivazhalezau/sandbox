@@ -38,9 +38,9 @@ services:
       - type: volume
         source: jenkins-data
         target: /var/jenkins_home
-      - type: bind
-        source: /var/run/docker.sock # <-- security problems
-        target: /var/run/docker.sock
+      # - type: bind
+      #   source: /var/run/docker.sock # <-- security problems
+      #   target: /var/run/docker.sock
 
   agent0:
     image: jenkins/ssh-agent:3.0.0-alpine
