@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   jenkins-docker:
-    image: docker:20.10-dind-rootless
+    image: docker:19-dind
     privileged: true # <-- security problems
     environment:
       DOCKER_TLS_CERTDIR: '/certs'
@@ -9,7 +9,6 @@ services:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
     ports:
-      - '22375:2375'
       - '2376:2376'
     restart: 'always'
     networks:
@@ -21,9 +20,8 @@ services:
     build: .
     depends_on:
       - jenkins-docker
-    privileged: true
     environment:
-      DOCKER_HOST: 'tcp://docker:22375'
+      DOCKER_HOST: 'tcp://docker:2376'
       DOCKER_CERT_PATH: /certs/client
       DOCKER_TLS_VERIFY: ""
       DOCKER_TLS_CERTDIR: ""
