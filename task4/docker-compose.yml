@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   jenkins-docker:
-    image: docker:dind
+    image: docker:20.10-dind-rootless
     privileged: true # <-- security problems
     environment:
       DOCKER_TLS_CERTDIR: '/certs'
@@ -57,11 +57,11 @@ services:
 
 volumes:
   jenkins-docker-certs:
-    external:
-      name: jenkins-docker-certs
+    # external:
+    #   name: jenkins-docker-certs
   jenkins-data:
-    external:
-      name: jenkins-data
+    # external:
+    #   name: jenkins-data
 
 networks:
   jenkins:
