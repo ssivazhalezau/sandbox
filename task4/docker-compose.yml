@@ -9,7 +9,7 @@ services:
       - jenkins-docker-certs:/certs/client
       - jenkins-data:/var/jenkins_home
     ports:
-      - '2375:2375'
+      - '22375:2375'
       - '2376:2376'
     restart: 'always'
     networks:
@@ -23,7 +23,7 @@ services:
       - jenkins-docker
     privileged: true
     environment:
-      DOCKER_HOST: 'tcp://docker:2375'
+      DOCKER_HOST: 'tcp://docker:22375'
       DOCKER_CERT_PATH: /certs/client
       DOCKER_TLS_VERIFY: ""
       DOCKER_TLS_CERTDIR: ""
@@ -49,8 +49,8 @@ services:
     image: jenkins/ssh-agent:3.0.0-alpine
     environment:
       JENKINS_AGENT_SSH_PUBKEY: ${PUBKEY}
-    ports:
-      - '22:22'
+    # ports:
+    #   - '22:22'
     restart: 'always'
     networks:
       - jenkins
