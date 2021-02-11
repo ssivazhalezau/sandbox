@@ -38,7 +38,6 @@ services:
       - type: volume
         source: jenkins-data
         target: /var/jenkins_home
-        read_only: true
       - type: bind
         source: /var/run/docker.sock # <-- security problems
         target: /var/run/docker.sock
