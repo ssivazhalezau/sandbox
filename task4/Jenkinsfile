@@ -18,7 +18,9 @@ pipeline {
     stage('Building our image') {
       steps {
         script {
-          dockerImage = docker.build("${registry}:${BUILD_NUMBER}", "${dockerfileContext}")
+          docker.withServer('tcp://172.31.87.61:2375') {
+            dockerImage = docker.build("${registry}:${BUILD_NUMBER}", "${dockerfileContext}")
+          }
         }
       }
     }

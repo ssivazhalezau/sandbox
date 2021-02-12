@@ -1,0 +1,19 @@
+pipeline {
+    agent { label 'master' }
+
+    stages {
+        stage('run container and print var value') {
+          steps {
+            script {
+              withCredentials([string(credentialsId: '2201aa2d-3259-477e-819f-474afceb7d0b', variable: 'VAR1')]) {
+                docker.withServer('tcp://172.31.87.61:2375') {
+                  docker.image('alpine:3.13').withRun('--env "${VAR1}"') { c ->
+                    sh 'echo "PASSWORD variable value is $(echo ${VAL} | sed -e \'s/\\(.\\)/\\1 /g\' ) without spaces"'
+                  }
+                }
+              }
+            }
+          }
+        }
+    }
+}
