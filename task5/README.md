@@ -7,3 +7,13 @@ Ansible playbook task5/site.yml used to:
 3) Database aws filled with:
  - docker exec -it task5_mysql1_1 sh -c 'mysql -u intern -p internship < docker-entrypoint-initdb.d/init.sql'
  - docker exec -it task5_mysql1_1 sh -c 'LANG=en_US.UTF-8 mysql -u intern -p internship < docker-entrypoint-initdb.d/fill.sql'
+
+Select query:
+
+SELECT Task1, Task2, Task3, Task4
+FROM `Result` AS r
+INNER JOIN
+Students AS s
+ON r.StudentId = s.StudentId
+WHERE s.Student LIKE '%Сивожелезов%';
+
