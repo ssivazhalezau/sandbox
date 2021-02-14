@@ -1,6 +1,7 @@
 # Homework for task 5
 
-task5/README.md used to:
+Ansible playbook task5/site.yml used to:
+
 1) Install docker engine and docker-compose.
 2) Deploy container based on mysql/mysql-server:8.0.23 image, using db_data persistent volume as storage.
 3) Database aws filled with:
