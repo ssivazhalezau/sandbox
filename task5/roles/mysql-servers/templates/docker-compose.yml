@@ -1,0 +1,27 @@
+# https://dev.mysql.com/doc/refman/8.0/en/docker-mysql-more-topics.html#docker-persisting-data-configuration
+---
+version: "3.9"
+services:
+  mysql1:
+    image: mysql/mysql-server:8.0.23
+    volumes:
+     - type: bind
+       source: /opt/task5/my.cnf
+       target: /etc/my.cnf
+     - type: bind
+       source: /opt/task5/
+       target: /docker-entrypoint-initdb.d/
+     - type: volume
+       source: db_data
+       target: /var/lib/mysql
+    ports:
+      - '3306:3306' # testing
+    restart: 'always'
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ mysql_root_password }}
+      MYSQL_DATABASE: internship
+      MYSQL_USER: intern
+      MYSQL_PASSWORD: {{ mysql_db_password }}
+
+volumes:
+  db_data:

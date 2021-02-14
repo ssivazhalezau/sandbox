@@ -1,0 +1,10 @@
+[docker_hosts]
+ec2-54-90-128-204.compute-1.amazonaws.com ansible_user=ec2-user ansible_python_interpreter=/usr/bin/python
+ec2-107-23-116-251.compute-1.amazonaws.com ansible_user=ec2-user ansible_python_interpreter=/usr/bin/python
+[db_hosts]
+ec2-54-90-128-204.compute-1.amazonaws.com
+ec2-107-23-116-251.compute-1.amazonaws.com
+[db_master]
+ec2-54-90-128-204.compute-1.amazonaws.com
+[db_replicas]
+ec2-107-23-116-251.compute-1.amazonaws.com

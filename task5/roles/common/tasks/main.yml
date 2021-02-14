@@ -1,0 +1,4 @@
+# roles/common/tasks/main.yml
+- name: Install the correct docker engine for Amazon linux
+  import_tasks: Amazon.yml
+  when: ansible_facts['os_family']|lower == 'redhat'

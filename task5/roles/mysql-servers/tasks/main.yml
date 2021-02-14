@@ -1,0 +1,45 @@
+# Ansible playbook - setup MySQL in container
+---
+
+- name: Create docker working directory
+  file:
+    path: /opt/task5
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create config files
+  template:
+    src: "{{ item }}"
+    dest: "/opt/task5/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - docker-compose.yml
+    - my.cnf
+    - init.sql
+    - fill.sql
+
+
+# hack as docker_compose failed in amazon linux 2 becaue of python 2 docker lib
+- name: run docker-compose file
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: /opt/task5/
+  register: output
+
+- name: Wait for db to accept connections
+  wait_for:
+    host: localhost
+    port: 3306
+    state: drained
+    connect_timeout: 1
+    timeout: 30
+  register: db_running
+  until: db_running is success
+  retries: 10
+
+- debug:
+    msg: "{{ output.stdout_lines }}"

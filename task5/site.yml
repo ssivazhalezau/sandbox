@@ -1,0 +1,15 @@
+#!/usr/bin/ansible-playbook
+---
+- name: Setup docker
+  hosts: docker_hosts
+  gather_subset: min
+  become: yes
+  roles:
+    - common
+
+- name: Setup db
+  hosts: db_hosts
+  gather_subset: min
+  become: yes
+  roles:
+    - mysql-servers
