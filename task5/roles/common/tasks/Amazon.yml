@@ -14,6 +14,7 @@
   vars:
     packages:
     - python-pip
+    # - mysql-devel # for MySQL-python
     - yum-utils
     - device-mapper-persistent-data
     - amazon-linux-extras

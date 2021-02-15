@@ -22,13 +22,11 @@
     - init.sql
     - fill.sql
 
-
 # hack as docker_compose failed in amazon linux 2 becaue of python 2 docker lib
 - name: run docker-compose file
   command: /usr/local/bin/docker-compose up -d
   args:
     chdir: /opt/task5/
-  register: output
 
 - name: Wait for db to accept connections
   wait_for:
@@ -41,5 +39,41 @@
   until: db_running is success
   retries: 10
 
-- debug:
-    msg: "{{ output.stdout_lines }}"
+# - name: Config superuser
+#   mysql_user:
+#     name: intern
+#     password: "{{ mysql_db_password }}"
+#     priv: '*.*:ALL'
+#     state: present
+
+# - name: Config replication user
+#   mysql_user:
+#     name: "{{ mysql_repl_user }}"
+#     password: "{{ mysql_repl_passwd }}"
+#     priv: '*.*:REPLICATION CLIENT'
+#     state: present
+
+# - name: Get current slave status
+#   mysql_replication:
+#     mode: getslave
+#     login_host: ec2-107-23-116-251.compute-1.amazonaws.com
+#   register: slave
+#   ignore_errors: true
+
+# - name: Get current master status
+#   mysql_replication:
+#     mode: getmaster
+#     login_host: ec2-54-90-128-204.compute-1.amazonaws.com
+#   register: master
+#   when: slave|failed
+
+# - name: Set replication
+#   mysql_replication:
+#     mode: changemaster
+#     login_host: ec2-107-23-116-251.compute-1.amazonaws.com
+#     master_host: ec2-54-90-128-204.compute-1.amazonaws.com
+#     master_log_file: "{{ master.File }}"
+#     master_log_pos: "{{ master.Position }}"
+#     master_user: "{{ mysql_repl_user }}"
+#     master_password: "{{ mysql_repl_passwd }}"
+#   when: slave|failed
