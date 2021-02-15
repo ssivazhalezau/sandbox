@@ -2,7 +2,9 @@ CREATE TABLE Students (
     ID INT,
     Student VARCHAR(255) NOT NULL,
     StudentId INT PRIMARY KEY
-);
+)
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
 
 CREATE TABLE Result (
     ID INT NOT NULL PRIMARY KEY,
@@ -14,4 +16,6 @@ CREATE TABLE Result (
     CONSTRAINT fk_studentid
       FOREIGN KEY (StudentId)
         REFERENCES Students(StudentId)
-);
+)
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
