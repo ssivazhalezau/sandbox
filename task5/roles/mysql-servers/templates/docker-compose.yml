@@ -22,6 +22,7 @@ services:
       MYSQL_DATABASE: internship
       MYSQL_USER: intern
       MYSQL_PASSWORD: {{ mysql_db_password }}
+      USERNAME: Сивожелезов
 
 volumes:
   db_data:
