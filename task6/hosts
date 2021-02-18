@@ -1,0 +1,7 @@
+[docker_hosts]
+ec2-54-221-75-113.compute-1.amazonaws.com ansible_user=ubuntu
+ec2-3-94-99-161.compute-1.amazonaws.com ansible_user=ec2-user swap_configure=false  ansible_python_interpreter=/usr/bin/python
+[zbx_servers]
+ec2-54-221-75-113.compute-1.amazonaws.com ansible_user=ubuntu
+[elk]
+ec2-3-94-99-161.compute-1.amazonaws.com

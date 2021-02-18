@@ -1,0 +1,65 @@
+# Ansible playbook AWS - install docker
+---
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+    update_only: yes
+
+- name: Ensure a list of yum packages are installed
+  yum:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - python-pip
+    # - mysql-devel # for MySQL-python
+    - yum-utils
+    - device-mapper-persistent-data
+    - amazon-linux-extras
+
+- name: Install docker-ce (centos) via amazon-linux-extras packages
+  command: amazon-linux-extras install docker -y
+  args:
+    creates: /usr/bin/docker
+
+- name: Enable Docker CE service at startup
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+
+- name: Add the user 'ec2-user' to 'docker'
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes
+
+- name: Install docker-compose
+  get_url:
+    url: 'https://github.com/docker/compose/releases/download/1.28.2/docker-compose-Linux-x86_64'
+    dest: /usr/local/bin/docker-compose
+    mode: u=rwx,g=rx,o=rx
+
+- name: Install Metricbeat package
+  yum:
+    name: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.11.1-x86_64.rpm
+    state: present
+
+- name: Configure Metricbeat
+  copy:
+    src: files/metricbeat.yml
+    dest: /etc/metricbeat/metricbeat.yml
+
+- name: Add Metricbeat module to docker engine
+  command: metricbeat modules enable docker
+  args:
+    creates: /etc/metricbeat/modules.d/docker.yml
+
+- name: Start Metricbeat service
+  ansible.builtin.service:
+    name: metricbeat
+    state: started
+    enabled: yes

@@ -1,0 +1,43 @@
+---
+version: "3.9"
+services:
+  zabbix-server-mysql:
+    image: zabbix/zabbix-server-mysql:5.2-alpine-latest
+    restart: 'always'
+    environment:
+      DB_SERVER_HOST: ec2-54-90-128-204.compute-1.amazonaws.com
+      MYSQL_USER: intern
+      MYSQL_PASSWORD: {{ mysql_db_password }}
+  zabbix-web-apache-mysql:
+    image: zabbix/zabbix-web-apache-mysql:5.2-alpine-latest
+    restart: 'always'
+    depends_on:
+     - zabbix-server-mysql
+    ports:
+      - '80:8080'
+      # - '10050:10050'
+    environment:
+      DB_SERVER_HOST: ec2-54-90-128-204.compute-1.amazonaws.com
+      MYSQL_USER: intern
+      MYSQL_PASSWORD: {{ mysql_db_password }}
+      ZBX_SERVER_HOST: zabbix-server-mysql
+      PHP_TZ: 'Europe/Minsk'
+      ZBX_SERVER_NAME: Batou
+  zabbix-agent-1:
+    image: zabbix/zabbix-agent:5.2-alpine-latest
+    hostname: zabbix-agent
+    restart: 'always'
+    depends_on:
+     - zabbix-server-mysql
+    ports:
+      - '10050:10050'
+    links:
+    - zabbix-server-mysql:zabbix-server-mysql
+    environment:
+      ZBX_HOSTNAME: zabbix-server-mysql
+      ZBX_SERVER_HOST: zabbix-server-mysql
+    privileged: true
+    pid: "host"
+
+volumes:
+  zbx_data:

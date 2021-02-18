@@ -1,0 +1,65 @@
+---
+version: "3.9"
+services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.11.1
+    container_name: es01
+    environment:
+      node.name: es01
+      discovery.type: single-node
+      bootstrap.memory_lock: 'true'
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      ELASTIC_PASSWORD: {{ elasticsearch_pass }}
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - elastic
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.11.1
+    volumes:
+      - type: bind
+        source: /opt/elk/kibana.yml
+        target: /usr/share/kibana/config/kibana.yml
+        read_only: true
+    ports:
+      - "5601:5601"
+    networks:
+      - elastic
+    depends_on:
+      - es01
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.11.1
+    volumes:
+      - type: bind
+        source: /opt/elk/logstash.yml
+        target: /usr/share/logstash/config/logstash.yml
+        read_only: true
+      - type: bind
+        source: /opt/elk/pipeline
+        target: /usr/share/logstash/pipeline
+        read_only: true
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elastic
+    depends_on:
+      - es01
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge

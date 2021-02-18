@@ -1,0 +1,22 @@
+#!/usr/bin/ansible-playbook
+---
+- name: Setup docker
+  hosts: docker_hosts
+  gather_subset: min
+  become: yes
+  roles:
+    - common
+
+- name: Setup zabbix server
+  hosts: zbx_servers
+  gather_subset: min
+  become: yes
+  roles:
+    - zabbix
+
+- name: Setup ELK
+  hosts: elk
+  gather_subset: min
+  become: yes
+  roles:
+    - ELK

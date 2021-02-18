@@ -1,0 +1,36 @@
+# Ansible playbook - setup zabbix in container
+---
+
+- name: Create zabbix working directory
+  file:
+    path: /opt/elk
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create logstash pipeline directory
+  file:
+    path: /opt/elk/pipeline
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create config files
+  template:
+    src: "{{ item }}"
+    dest: "/opt/elk/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - docker-compose.yml
+    - kibana.yml
+    - logstash.yml
+
+- name: run docker-compose file
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: /opt/elk/
+
