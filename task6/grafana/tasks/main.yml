@@ -1,0 +1,24 @@
+# Ansible playbook - setup grafana
+---
+- name: Create "{{ role_name }}" working directory
+  file:
+    path: "/opt/{{ role_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create config files
+  template:
+    src: "{{ item }}"
+    dest: "/opt/{{ role_name }}/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - docker-compose.yml
+
+- name: run docker-compose file
+  command: /usr/local/bin/docker-compose up -d
+  args:
+    chdir: "/opt/{{ role_name }}/"

@@ -30,7 +30,6 @@
     state: started
     enabled: yes
 
-
 - name: Add the user 'ec2-user' to 'docker'
   user:
     name: ec2-user
@@ -43,20 +42,51 @@
     dest: /usr/local/bin/docker-compose
     mode: u=rwx,g=rx,o=rx
 
-- name: Install Metricbeat package
-  yum:
-    name: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.11.1-x86_64.rpm
+- name: Import a Elastic gpg key from a url
+  ansible.builtin.rpm_key:
     state: present
+    key: https://packages.elastic.co/GPG-KEY-elasticsearch
 
-- name: Configure Metricbeat
-  copy:
-    src: files/metricbeat.yml
+- name: Add Elasticrepository
+  yum_repository:
+    name: elastic
+    description: Elastic repository for 7.x packages
+    baseurl: https://artifacts.elastic.co/packages/7.x/yum
+    gpgcheck: yes
+    gpgkey: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: install beats packages
+  yum:
+    name: ['filebeat', 'metricbeat']
+    state: present
+    update_cache: yes
+
+- name: Configure filebeat
+  template:
+    src: filebeat.yml
+    dest: /etc/filebeat/filebeat.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+  - restart filebeat
+
+- name: Configure metricbeat
+  template:
+    src: metricbeat.yml
     dest: /etc/metricbeat/metricbeat.yml
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+  - restart metricbeat
 
 - name: Add Metricbeat module to docker engine
   command: metricbeat modules enable docker
   args:
     creates: /etc/metricbeat/modules.d/docker.yml
+  notify:
+  - restart metricbeat
 
 - name: Start Metricbeat service
   ansible.builtin.service:

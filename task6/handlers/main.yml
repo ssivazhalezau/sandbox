@@ -1,0 +1,10 @@
+---
+- name: restart metribeat
+  ansible.builtin.service:
+    name: metricbeat
+    state: restarted
+
+- name: restart filebeat
+  ansible.builtin.service:
+    name: filebeat
+    state: restarted

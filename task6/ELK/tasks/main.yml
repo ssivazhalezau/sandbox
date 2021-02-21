@@ -1,7 +1,6 @@
 # Ansible playbook - setup zabbix in container
 ---
-
-- name: Create zabbix working directory
+- name: Create ELK working directory
   file:
     path: /opt/elk
     state: directory
@@ -28,9 +27,9 @@
     - docker-compose.yml
     - kibana.yml
     - logstash.yml
+    - pipeline/first-pipeline.conf
 
 - name: run docker-compose file
   command: /usr/local/bin/docker-compose up -d
   args:
     chdir: /opt/elk/
-

@@ -1,4 +1,5 @@
 ---
+elasticsearch_host: ec2-18-207-249-142.compute-1.amazonaws.com
 elasticsearch_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           62393863396366313535313661333963333766356664663063663766346362353264343831306438

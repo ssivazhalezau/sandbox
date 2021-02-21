@@ -57,6 +57,7 @@
   package_facts:
     manager: "auto"
 
+# todo: chanfe to install from repo like inrhel playbook
 - name: Install Metricbeat package
   block:
   - name: Download Metricbeat package
@@ -69,17 +70,25 @@
       deb: https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.11.1-amd64.deb
   when: "'metricbeat' not in ansible_facts.packages"
 
-- name: Configure Metricbeat
-  copy:
-    src: files/metricbeat.yml
-    dest: /etc/metricbeat/metricbeat.yml
-  # notify:
-  # - Restart metricbeat
+- name: Configure beats
+  template:
+    src: "{{ item }}.yml"
+    dest: "/etc/{{ item }}/{{ item }}.yml"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    # - filebeat
+    - metricbeat
+  notify:
+  - restart metricbeat
 
 - name: Add Metricbeat module to docker engine
   command: metricbeat modules enable docker
   args:
     creates: /etc/metricbeat/modules.d/docker.yml
+  notify:
+  - restart metricbeat
 
 - name: Start Metricbeat service
   ansible.builtin.service:

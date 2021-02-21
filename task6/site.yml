@@ -7,16 +7,23 @@
   roles:
     - common
 
-- name: Setup zabbix server
-  hosts: zbx_servers
-  gather_subset: min
-  become: yes
-  roles:
-    - zabbix
+# - name: Setup zabbix server
+#   hosts: zbx_servers
+#   gather_subset: min
+#   become: yes
+#   roles:
+#     - zabbix
 
-- name: Setup ELK
-  hosts: elk
+# - name: Setup ELK
+#   hosts: elk
+#   gather_subset: min
+#   become: yes
+#   roles:
+#     - ELK
+
+- name: Setup grafana
+  hosts: grafana
   gather_subset: min
   become: yes
   roles:
-    - ELK
+    - grafana
