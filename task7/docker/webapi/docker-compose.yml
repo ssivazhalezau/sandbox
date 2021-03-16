@@ -1,0 +1,56 @@
+---
+version: "3.9"
+services:
+  webapi:
+    image: 666pehid666/crazy-api
+    container_name: webapi
+    ports:
+      - 9000:80
+      - 9001:443
+    volumes:
+      - ./volumes/logs/api:/app/Logs/
+      - type: bind
+        source: ./volumes/certificates/update-ca-cert.sh
+        target: /https-root/update-ca-cert.sh
+      - type: bind
+        source: ./volumes/certificates/aspnetapp-root-cert.cer
+        target: /https-root/aspnetapp-root-cert.cer
+      - type: bind
+        source: ./volumes/certificates/webapi.stage.gramada.biz.pfx
+        target: /https/webapi.stage.gramada.biz.pfx
+      - type: bind
+        source: ./volumes/configuration/api/appsettings.Docker.json
+        target: /app/appsettings.Docker.json
+    environment:
+      ASPNETCORE_URLS: 'https://+;http://+'
+      ASPNETCORE_HTTPS_PORT: 9001
+      ASPNETCORE_ENVIRONMENT: 'Docker'
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 'password'
+      ASPNETCORE_Kestrel__Certificates__Default__Path: '/https/webapi.stage.gramada.biz.pfx'
+    entrypoint: bash -c "/https-root/update-ca-cert.sh && dotnet Exadel.CrazyPrice.WebApi.dll"
+    depends_on:
+      - cprabbit
+
+  cprabbit:
+    image: 666pehid666/crazy-rabbitmq:latest
+    container_name: rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  mailsender:
+    image: 666pehid666/crazy-mailsender:latest
+    ports:
+      - 7000:80
+
+  front:
+    image: 666pehid666/crazy-front:latest
+    container_name: front
+    ports:
+      - 443:44357
+
+volumes:
+  certs:
+  vhosts:
+  html:
+  acme:

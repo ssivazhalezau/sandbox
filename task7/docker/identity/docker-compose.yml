@@ -1,0 +1,75 @@
+# compose of https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion
+---
+version: "3.9"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhosts:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - type: bind
+        source: /var/run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true
+    ports:
+      - 80:80
+      - 443:443
+
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:2.0.2
+    container_name: nginx-proxy-letsencrypt
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - acme:/etc/acme.sh
+    environment:
+      NGINX_PROXY_CONTAINER: 'nginx-proxy'
+    depends_on:
+      - nginx-proxy
+
+  identityserver:
+    image: 666pehid666/crazy-identity
+    ports:
+      - 8000:80
+      - 8001:443
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - ./volumes/logs/identityServer:/app/Logs/
+      - type: bind
+        # source: ./volumes/certificates/aspnetapp-root-cert.cer
+        # target: /https-root/aspnetapp-root-cert.cer
+        # openssl pkcs12 -export -out identity.stage.gramada.biz.pfx -inkey identity.stage.gramada.biz.key -in identity.stage.gramada.biz.crt -password pass:password
+      - type: bind
+        source: ./volumes/certificates/identity.stage.gramada.biz.pfx
+        target: /app/aspnetapp-root-cert.pfx
+      - type: bind
+        source: ./volumes/certificates/identity.stage.gramada.biz.pfx
+        target: /https/identity.stage.gramada.biz.pfx
+      - type: bind
+        source: ./volumes/configuration/identity/appsettings.Docker.json
+        target: /app/appsettings.Docker.json
+    environment:
+      ASPNETCORE_URLS: 'https://+;http://+'
+      ASPNETCORE_HTTPS_PORT: 8001
+      ASPNETCORE_ENVIRONMENT: 'Docker'
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 'password'
+      ASPNETCORE_Kestrel__Certificates__Default__Path: '/https/identity.stage.gramada.biz.pfx'
+      VIRTUAL_HOST: 'identity.stage.gramada.biz'
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: 'identity.stage.gramada.biz'
+    depends_on:
+      - nginx-proxy
+      - nginx-proxy-letsencrypt
+
+volumes:
+  certs:
+  vhosts:
+  html:
+  acme:

@@ -1,0 +1,20 @@
+# compose of https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion
+---
+version: "3.9"
+services:
+ database:
+  image: mongo
+  ports:
+   - 27017:27017
+  restart: always
+  volumes:
+   - ./volumes/database/data:/data/db/
+
+ databaseseed:
+  image: mongo
+  volumes:
+   - ./volumes/database/seed:/seed/
+  command:
+   /seed/import.sh
+  depends_on:
+   - database

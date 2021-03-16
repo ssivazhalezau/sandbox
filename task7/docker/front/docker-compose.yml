@@ -1,0 +1,9 @@
+# compose of https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion
+---
+version: "3.9"
+services:
+  front:
+    image: 666pehid666/crazy-front
+    container_name: front
+    ports:
+      - 44357:44357

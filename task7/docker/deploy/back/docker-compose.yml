@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  cprabbit:
+    image: rabbitmq:3-management
+    container_name: rabbit
+    ports:
+    - 5672:5672
+    - 15672:15672
+    restart: always
+    volumes:
+    - ../../../../exadel_discounts_be/volumes/configuration/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+    - ../../../../exadel_discounts_be/volumes/configuration/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+    - rabbitmq:/var/lib/rabbitmq/mnesia/rabbit@cprabbit
+    - ./volumes/logs/rabbitmq:/var/log/rabbitmq/log
+
+  mailsender:
+    image: mailsender
+    container_name: mailsender
+    build:
+      context: ../../../../exadel_discounts_be/src/Exadel.CrazyPrice
+      dockerfile: Exadel.CrazyPrice.Services/Mail/MailSenderMailKit/Dockerfile
+    ports:
+    - 7000:80
+    volumes:
+    - ./volumes/logs/mailsender:/app/Logs/
+    - type: bind
+      source: ../../../../exadel_discounts_be/volumes/configuration/mailsender/appsettings.Docker.json
+      target: /app/appsettings.Docker.json
+    environment:
+    - ASPNETCORE_URLS=http://+
+    - ASPNETCORE_ENVIRONMENT=Docker
+
+  identityserver:
+    image: identityserver
+    container_name: identityserver
+    build:
+      context: ../../../../exadel_discounts_be/src/Exadel.CrazyPrice
+      dockerfile: Exadel.CrazyPrice.IdentityServer/Dockerfile
+    ports:
+    - 8000:80
+    - 8001:443
+    volumes:
+    - ./volumes/logs/identityServer:/app/Logs/
+    - type: bind
+      source: ./volumes/certificates/identity.stage.gramada.biz.pfx
+      target: /app/aspnetapp-root-cert.pfx
+    - type: bind
+      source: ./volumes/certificates/identity.stage.gramada.biz.pfx
+      target: /https/identity.stage.gramada.biz.pfx
+    - type: bind
+      source: ./volumes/configuration/identity/appsettings.Docker.json
+      target: /app/appsettings.Docker.json
+    environment:
+      ASPNETCORE_URLS: 'https://+;http://+'
+      ASPNETCORE_HTTPS_PORT: 8001
+      ASPNETCORE_ENVIRONMENT: 'Docker'
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 'password'
+      ASPNETCORE_Kestrel__Certificates__Default__Path: '/https/identity.stage.gramada.biz.pfx'
+
+  webapi:
+    image: webapi
+    container_name: webapi
+    build:
+      context: ../../../../exadel_discounts_be/src/Exadel.CrazyPrice
+      dockerfile: Exadel.CrazyPrice.WebApi/Dockerfile
+    ports:
+    - 9000:80
+    - 9001:443
+    volumes:
+    - ./volumes/logs/api:/app/Logs/
+    - type: bind
+      source: ./volumes/certificates/webapi.stage.gramada.biz.pfx
+      target: /https/webapi.stage.gramada.biz.pfx
+    - type: bind
+      source: ./volumes/configuration/api/appsettings.Docker.json
+      target: /app/appsettings.Docker.json
+    environment:
+      ASPNETCORE_URLS: 'https://+;http://+'
+      ASPNETCORE_HTTPS_PORT: 9001
+      ASPNETCORE_ENVIRONMENT: 'Docker'
+      ASPNETCORE_Kestrel__Certificates__Default__Password: 'password'
+      ASPNETCORE_Kestrel__Certificates__Default__Path: '/https/webapi.stage.gramada.biz.pfx'
+    entrypoint: bash -c "dotnet Exadel.CrazyPrice.WebApi.dll"
+    depends_on:
+    - identityserver
+
+volumes:
+  rabbitmq:

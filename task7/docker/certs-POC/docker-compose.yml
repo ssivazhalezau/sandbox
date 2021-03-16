@@ -1,0 +1,51 @@
+# compose of https://github.com/nginx-proxy/docker-letsencrypt-nginx-proxy-companion
+---
+version: "3.9"
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    volumes:
+      - certs:/etc/nginx/certs
+      - vhosts:/etc/nginx/vhost.d
+      - html:/usr/share/nginx/html
+      - type: bind
+        source: /var/run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true
+    ports:
+      - 80:80
+      - 443:443
+  nginx-proxy-letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion:2.0.2
+    container_name: nginx-proxy-letsencrypt
+    volumes_from:
+      - nginx-proxy
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+      - acme:/etc/acme.sh
+    environment:
+      NGINX_PROXY_CONTAINER: 'nginx-proxy'
+    depends_on:
+      - nginx-proxy
+  proxied-app:
+    image: nginxdemos/hello:0.2
+    container_name: proxied-app
+    ports:
+      - 8000:80
+    environment:
+      VIRTUAL_HOST: 'webapi.stage.gramada.biz'
+      VIRTUAL_PORT: 8000
+      LETSENCRYPT_HOST: 'webapi.stage.gramada.biz'
+    depends_on:
+      - nginx-proxy
+      - nginx-proxy-letsencrypt
+
+volumes:
+  certs:
+  vhosts:
+  html:
+  acme:
